@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Welcome to Ediary{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'main/styles/styles.css' %}">
+    <style>
+        /* Additional styles specific to the home page */
+        #hero {
+            position: relative;
+            height: 100vh;
+            background: none; /* Remove background color */
+        }
+        #hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("{% static 'main/images/back1.jpg' %}") center/cover no-repeat;
+            animation: fadeBackground 35s infinite;
+        }
+        @keyframes fadeBackground {
+            0%, 14.3% { background-image: url("{% static 'main/images/back1.jpg' %}"); }
+            16.6%, 29.9% { background-image: url("{% static 'main/images/back2.jpg' %}"); }
+            33.2%, 49.9% { background-image: url("{% static 'main/images/back3.jpg' %}"); }
+            50.1%, 64.9% { background-image: url("{% static 'main/images/back4.jpg' %}"); }
+            66.6%, 79.9% { background-image: url("{% static 'main/images/back5.jpg' %}"); }
+            83.2%, 99.9% { background-image: url("{% static 'main/images/back6.jpg' %}"); }
+        }
+
+        /* Styles for content */
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 50px;
+            color: #fff;
+        }
+
+        .hero-content h2 {
+            font-size: 3rem;
+        }
+
+        .hero-content p {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .hero-content .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #fff;
+            color: #333;
+            text-decoration: none;
+            font-size: 1.2rem;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to Ediary</h1>
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}">Home</a></li>
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'meetings' %}">Meetings</a></li>
+                <li><a href="{% url 'diary' %}">Diary</a></li>
+                <li><a href="{% url 'todo' %}">To-Do List</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
+                {% else %}
+                <li><a href="{% url 'login' %}">Login</a></li>
+                <li><a href="{% url 'signup' %}">Sign Up</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="hero">
+            <div class="hero-content">
+                <h2>Welcome to Ediary</h2>
+                <p>Your personal diary, to-do list manager, and meeting planner.</p>
+                <p>Your personal diary, to-do list manager, and meeting planner - all in one secure and easy-to-use platform. Ediary not only helps you organize your daily tasks but also allows you to jot down thoughts, plan meetings, and stay on top of your schedule effortlessly. With features like customizable diary covers, real-time synchronization across devices, and intuitive interface, Ediary ensures that managing your personal and professional life is both efficient and enjoyable. Join thousands of users who have chosen Ediary for its reliability, flexibility, and seamless integration into their daily routines.</p>
+                {% if not user.is_authenticated %}
+                <p><a href="{% url 'signup' %}" class="btn">Get Started</a></p>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Ediary. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript for background image rotation -->
+    <script>
+        // JavaScript for fading background images
+        setInterval(() => {
+            document.getElementById('hero').classList.toggle('fade');
+        }, 5000); // Change background every 5 seconds
+    </script>
+</body>
+</html>

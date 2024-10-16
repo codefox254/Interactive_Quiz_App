@@ -1,0 +1,89 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: hsl(138, 91%, 17%);
+    margin: 0;
+    padding: 0;
+}
+
+header {
+    background-color: #57ec12;
+    color: white;
+    padding: 10px 0;
+}
+
+header h1 {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+    text-align: center;
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 10px;
+}
+
+nav ul li a {
+    color: white;
+    text-decoration: none;
+}
+
+main {
+    padding: 20px;
+    text-align: center;
+}
+
+.btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+
+footer {
+    text-align: center;
+    padding: 10px;
+    background-color: hsl(180, 96%, 18%);
+    color: white;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Additional styles specific to the home page */
+#hero {
+    position: relative;
+    height: 100vh;
+    background: url("{% static 'main/images/back1.jpg' %}") center/cover no-repeat;
+    animation: fadeBackground 35s infinite;
+}
+
+@keyframes fadeBackground {
+    0%, 14.3% { background: url("{% static 'main/images/back1.jpg' %}") center/cover no-repeat; }
+    16.6%, 29.9% { background: url("{% static 'main/images/back2.jpg' %}") center/cover no-repeat; }
+    33.2%, 49.9% { background: url("{% static 'main/images/back3.jpg' %}") center/cover no-repeat; }
+    50.1%, 64.9% { background: url("{% static 'main/images/back4.jpg' %}") center/cover no-repeat; }
+    66.6%, 79.9% { background: url("{% static 'main/images/back5.jpg' %}") center/cover no-repeat; }
+    83.2%, 99.9% { background: url("{% static 'main/images/back6.jpg' %}") center/cover no-repeat; }
+}
+
+/* Additional styles for hero content */
+.hero-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: #fff; /* Change text color for better contrast */
+}

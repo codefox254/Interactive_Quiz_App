@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Database Quiz</title>
+    <style>
+        /* Basic styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        header, footer {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        main {
+            padding: 20px;
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #4CAF50;
+        }
+
+        ol {
+            list-style-type: decimal;
+        }
+
+        li {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin: 5px 0;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px; /* Space between buttons */
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .timer {
+            font-size: 24px;
+            color: red;
+            font-weight: bold;
+            text-align: right;
+        }
+
+        .results {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        .correct {
+            color: green;
+        }
+
+        .incorrect {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    Database Quiz
+</header>
+
+<main>
+    <div class="timer">Time left: <span id="time">60</span> seconds</div>
+    
+    <h1>Database Quiz</h1>
+
+    <form id="quiz-form" method="post">
+        {% csrf_token %}
+        <ol id="questions-list"></ol>
+        <button type="submit">Submit Answers</button>
+    </form>
+
+    <div class="results" id="results"></div>
+</main>
+
+<footer>
+    © 2024 Quiz App
+</footer>
+
+<script>
+    // Static questions for the Database Quiz
+    const questions = [
+        {
+            text: "What does SQL stand for?",
+            answers: [
+                { id: 1, text: "Structured Query Language" },
+                { id: 2, text: "Simple Query Language" },
+                { id: 3, text: "Standard Query Language" },
+                { id: 4, text: "Sequential Query Language" }
+            ],
+            correct: 1
+        },
+        {
+            text: "Which type of database is organized into rows and columns?",
+            answers: [
+                { id: 1, text: "Hierarchical" },
+                { id: 2, text: "Object-oriented" },
+                { id: 3, text: "Relational" },
+                { id: 4, text: "Document" }
+            ],
+            correct: 3
+        },
+        {
+            text: "What is a primary key?",
+            answers: [
+                { id: 1, text: "A field that uniquely identifies a record in a table" },
+                { id: 2, text: "A field used to link two tables" },
+                { id: 3, text: "A field that allows null values" },
+                { id: 4, text: "A field that stores binary data" }
+            ],
+            correct: 1
+        },
+        {
+            text: "What does ACID stand for in database transactions?",
+            answers: [
+                { id: 1, text: "Atomicity, Consistency, Isolation, Durability" },
+                { id: 2, text: "Accuracy, Consistency, Integrity, Durability" },
+                { id: 3, text: "Atomicity, Coordination, Isolation, Durability" },
+                { id: 4, text: "Accuracy, Connectivity, Integrity, Distribution" }
+            ],
+            correct: 1
+        },
+        {
+            text: "Which SQL clause is used to filter rows returned by a query?",
+            answers: [
+                { id: 1, text: "SELECT" },
+                { id: 2, text: "WHERE" },
+                { id: 3, text: "ORDER BY" },
+                { id: 4, text: "GROUP BY" }
+            ],
+            correct: 2
+        },
+        {
+            text: "What is a foreign key?",
+            answers: [
+                { id: 1, text: "A key that links two tables" },
+                { id: 2, text: "A key that uniquely identifies a record" },
+                { id: 3, text: "A key that allows duplicate values" },
+                { id: 4, text: "A key that stores encrypted data" }
+            ],
+            correct: 1
+        },
+        {
+            text: "Which SQL statement is used to insert data into a table?",
+            answers: [
+                { id: 1, text: "UPDATE" },
+                { id: 2, text: "INSERT INTO" },
+                { id: 3, text: "ADD" },
+                { id: 4, text: "CREATE" }
+            ],
+            correct: 2
+        },
+        {
+            text: "Which SQL command is used to retrieve data from a database?",
+            answers: [
+                { id: 1, text: "SELECT" },
+                { id: 2, text: "GET" },
+                { id: 3, text: "RETRIEVE" },
+                { id: 4, text: "FETCH" }
+            ],
+            correct: 1
+        },
+        {
+            text: "What does 'normalization' mean in database design?",
+            answers: [
+                { id: 1, text: "Ensuring tables are linked" },
+                { id: 2, text: "Organizing data to minimize redundancy" },
+                { id: 3, text: "Indexing data for faster queries" },
+                { id: 4, text: "Creating backup copies of data" }
+            ],
+            correct: 2
+        },
+        {
+            text: "What is the purpose of an index in a database?",
+            answers: [
+                { id: 1, text: "To ensure uniqueness of data" },
+                { id: 2, text: "To enforce referential integrity" },
+                { id: 3, text: "To improve the speed of data retrieval" },
+                { id: 4, text: "To link tables" }
+            ],
+            correct: 3
+        }
+    ];
+
+    // Populate the quiz questions dynamically
+    const questionsList = document.getElementById('questions-list');
+    questions.forEach((question, index) => {
+        const listItem = document.createElement('li');
+        listItem.innerHTML = `<p>${question.text}</p>`;
+        question.answers.forEach(answer => {
+            listItem.innerHTML += `
+                <label>
+                    <input type="radio" name="question_${index}" value="${answer.id}">
+                    ${answer.text}
+                </label>
+            `;
+        });
+        questionsList.appendChild(listItem);
+    });
+
+    // Timer functionality
+    let timeLeft = 60;
+    let timerInterval = setInterval(() => {
+        document.getElementById('time').innerText = timeLeft;
+        timeLeft--;
+
+        // If time runs out, auto-submit the form
+        if (timeLeft < 0) {
+            clearInterval(timerInterval);
+            document.getElementById('quiz-form').submit();
+        }
+    }, 1000);
+
+    // Form submission handling
+    document.getElementById('quiz-form').onsubmit = function(event) {
+        event.preventDefault(); // Prevent default form submission
+        clearInterval(timerInterval); // Stop the timer
+
+        // Calculate score
+        let score = 0;
+        const total = questions.length;
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.innerHTML = '';
+
+        questions.forEach((question, index) => {
+            const selectedAnswer = document.querySelector(`input[name="question_${index}"]:checked`);
+            if (selectedAnswer && parseInt(selectedAnswer.value) === question.correct) {
+                score++;
+                resultsDiv.innerHTML += `<p>${question.text}: <span class="correct">Correct</span></p>`;
+            } else {
+                resultsDiv.innerHTML += `<p>${question.text}: <span class="incorrect">Incorrect</span></p>`;
+            }
+        });
+
+        resultsDiv.innerHTML += `<p>You scored ${score} out of ${total}</p>`;
+        
+        // Add Retry and Back buttons
+        resultsDiv.innerHTML += `
+            <button id="retry-btn">Retry</button>
+            <button id="back-btn">Back</button>
+        `;
+
+        // Retry button functionality
+        document.getElementById('retry-btn').onclick = function() {
+            location.reload(); // Reload the page to retry the quiz
+        };
+
+        // Back button functionality
+        document.getElementById('back-btn').onclick = function() {
+            window.history.back(); // Go back to the previous page
+        };
+    };
+</script>
+
+</body>
+</html>

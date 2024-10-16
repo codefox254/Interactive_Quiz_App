@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Networking Quiz</title>
+    <style>
+        /* Basic styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        header, footer {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        main {
+            padding: 20px;
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #4CAF50;
+        }
+
+        ol {
+            list-style-type: decimal;
+        }
+
+        li {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin: 5px 0;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-right: 10px; /* Space between buttons */
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .timer {
+            font-size: 24px;
+            color: red;
+            font-weight: bold;
+            text-align: right;
+        }
+
+        .results {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        .correct {
+            color: green;
+        }
+
+        .incorrect {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    Networking Quiz
+</header>
+
+<main>
+    <div class="timer">Time left: <span id="time">60</span> seconds</div>
+    
+    <h1>Networking Quiz</h1>
+
+    <form id="quiz-form" method="post">
+        {% csrf_token %}
+        <ol id="questions-list"></ol>
+        <button type="submit">Submit Answers</button>
+    </form>
+
+    <div class="results" id="results"></div>
+</main>
+
+<footer>
+    © 2024 Quiz App
+</footer>
+
+<script>
+    // Static questions for the Networking Quiz
+    const questions = [
+        {
+            text: "What does LAN stand for?",
+            answers: [
+                { id: 1, text: "Local Area Network" },
+                { id: 2, text: "Large Area Network" },
+                { id: 3, text: "Long Area Network" },
+                { id: 4, text: "None of the above" }
+            ],
+            correct: 1 // Correct answer id
+        },
+        {
+            text: "What protocol is used to send email?",
+            answers: [
+                { id: 1, text: "FTP" },
+                { id: 2, text: "SMTP" },
+                { id: 3, text: "HTTP" },
+                { id: 4, text: "POP3" }
+            ],
+            correct: 2
+        },
+        {
+            text: "What is the primary purpose of a router?",
+            answers: [
+                { id: 1, text: "Connect devices within a local network" },
+                { id: 2, text: "Forward data packets between networks" },
+                { id: 3, text: "Store data" },
+                { id: 4, text: "Create a network" }
+            ],
+            correct: 2
+        },
+        {
+            text: "Which of the following is a network security protocol?",
+            answers: [
+                { id: 1, text: "HTTP" },
+                { id: 2, text: "HTTPS" },
+                { id: 3, text: "FTP" },
+                { id: 4, text: "SMTP" }
+            ],
+            correct: 2
+        },
+        {
+            text: "What does IP stand for?",
+            answers: [
+                { id: 1, text: "Internet Protocol" },
+                { id: 2, text: "Internal Protocol" },
+                { id: 3, text: "Interconnected Protocol" },
+                { id: 4, text: "None of the above" }
+            ],
+            correct: 1
+        },
+        {
+            text: "Which device is used to connect a computer to the internet?",
+            answers: [
+                { id: 1, text: "Switch" },
+                { id: 2, text: "Router" },
+                { id: 3, text: "Modem" },
+                { id: 4, text: "Hub" }
+            ],
+            correct: 3
+        },
+        {
+            text: "What is the maximum length of a CAT5 cable?",
+            answers: [
+                { id: 1, text: "100 meters" },
+                { id: 2, text: "150 meters" },
+                { id: 3, text: "200 meters" },
+                { id: 4, text: "300 meters" }
+            ],
+            correct: 1
+        },
+        {
+            text: "What is DHCP?",
+            answers: [
+                { id: 1, text: "Dynamic Host Configuration Protocol" },
+                { id: 2, text: "Domain Host Control Protocol" },
+                { id: 3, text: "Dynamic Hypertext Control Protocol" },
+                { id: 4, text: "None of the above" }
+            ],
+            correct: 1
+        },
+        {
+            text: "Which layer of the OSI model does the IP protocol operate?",
+            answers: [
+                { id: 1, text: "Application" },
+                { id: 2, text: "Transport" },
+                { id: 3, text: "Network" },
+                { id: 4, text: "Data Link" }
+            ],
+            correct: 3
+        }
+    ];
+
+    // Populate the quiz questions dynamically
+    const questionsList = document.getElementById('questions-list');
+    questions.forEach((question, index) => {
+        const listItem = document.createElement('li');
+        listItem.innerHTML = `<p>${question.text}</p>`;
+        question.answers.forEach(answer => {
+            listItem.innerHTML += `
+                <label>
+                    <input type="radio" name="question_${index}" value="${answer.id}">
+                    ${answer.text}
+                </label>
+            `;
+        });
+        questionsList.appendChild(listItem);
+    });
+
+    // Timer functionality
+    let timeLeft = 60;
+    let timerInterval = setInterval(() => {
+        document.getElementById('time').innerText = timeLeft;
+        timeLeft--;
+
+        // If time runs out, auto-submit the form
+        if (timeLeft < 0) {
+            clearInterval(timerInterval);
+            document.getElementById('quiz-form').submit();
+        }
+    }, 1000);
+
+    // Form submission handling
+    document.getElementById('quiz-form').onsubmit = function(event) {
+        event.preventDefault(); // Prevent default form submission
+        clearInterval(timerInterval); // Stop the timer
+
+        // Calculate score
+        let score = 0;
+        const total = questions.length;
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.innerHTML = '';
+
+        questions.forEach((question, index) => {
+            const selectedAnswer = document.querySelector(`input[name="question_${index}"]:checked`);
+            if (selectedAnswer && parseInt(selectedAnswer.value) === question.correct) {
+                score++;
+                resultsDiv.innerHTML += `<p>${question.text}: <span class="correct">Correct</span></p>`;
+            } else {
+                resultsDiv.innerHTML += `<p>${question.text}: <span class="incorrect">Incorrect</span></p>`;
+            }
+        });
+
+        resultsDiv.innerHTML += `<p>You scored ${score} out of ${total}</p>`;
+        
+        // Add Retry and Back buttons
+        resultsDiv.innerHTML += `
+            <button id="retry-btn">Retry</button>
+            <button id="back-btn">Back</button>
+        `;
+
+        // Retry button functionality
+        document.getElementById('retry-btn').onclick = function() {
+            location.reload(); // Reload the page to retry the quiz
+        };
+
+        // Back button functionality
+        document.getElementById('back-btn').onclick = function() {
+            window.history.back(); // Go back to the previous page
+        };
+    };
+</script>
+
+</body>
+</html>

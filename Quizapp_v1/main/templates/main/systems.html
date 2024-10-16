@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Systems Quiz</title>
+    <style>
+        /* Basic styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        header, footer {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        main {
+            padding: 20px;
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #4CAF50;
+        }
+
+        ol {
+            list-style-type: decimal;
+        }
+
+        li {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin: 5px 0;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .timer {
+            font-size: 24px;
+            color: red;
+            font-weight: bold;
+            text-align: right;
+        }
+
+        .results {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        .correct {
+            color: green;
+        }
+
+        .incorrect {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    Systems Quiz
+</header>
+
+<main>
+    <div class="timer">Time left: <span id="time">60</span> seconds</div>
+    
+    <h1>Systems Quiz</h1>
+
+    <form id="quiz-form" method="post">
+        {% csrf_token %}
+        <ol id="questions-list"></ol>
+        <button type="submit">Submit Answers</button>
+    </form>
+
+    <div class="results" id="results"></div>
+</main>
+
+<footer>
+    © 2024 Quiz App
+</footer>
+
+<script>
+    // Static questions for the Systems Quiz
+    const questions = [
+        {
+            text: "What does OS stand for?",
+            answers: [
+                { id: 1, text: "Operating System" },
+                { id: 2, text: "Open Source" },
+                { id: 3, text: "Online System" },
+                { id: 4, text: "Overhead System" }
+            ],
+            correct: 1 // Correct answer id
+        },
+        {
+            text: "Which of the following is a type of operating system?",
+            answers: [
+                { id: 1, text: "Windows" },
+                { id: 2, text: "Web" },
+                { id: 3, text: "Internet" },
+                { id: 4, text: "Network" }
+            ],
+            correct: 1
+        },
+        {
+            text: "What is the main function of the CPU?",
+            answers: [
+                { id: 1, text: "Store data" },
+                { id: 2, text: "Perform calculations" },
+                { id: 3, text: "Manage input/output" },
+                { id: 4, text: "Connect devices" }
+            ],
+            correct: 2
+        },
+        {
+            text: "Which memory is volatile?",
+            answers: [
+                { id: 1, text: "RAM" },
+                { id: 2, text: "ROM" },
+                { id: 3, text: "Hard Drive" },
+                { id: 4, text: "Flash Drive" }
+            ],
+            correct: 1
+        },
+        {
+            text: "What is the primary purpose of an operating system?",
+            answers: [
+                { id: 1, text: "Run applications" },
+                { id: 2, text: "Manage hardware and software resources" },
+                { id: 3, text: "Perform calculations" },
+                { id: 4, text: "Connect to the internet" }
+            ],
+            correct: 2
+        },
+        {
+            text: "What is the file system used by Windows?",
+            answers: [
+                { id: 1, text: "NTFS" },
+                { id: 2, text: "FAT32" },
+                { id: 3, text: "ext4" },
+                { id: 4, text: "HFS+" }
+            ],
+            correct: 1
+        },
+        {
+            text: "What is a kernel?",
+            answers: [
+                { id: 1, text: "The core component of an OS" },
+                { id: 2, text: "A type of software" },
+                { id: 3, text: "A hardware component" },
+                { id: 4, text: "A network protocol" }
+            ],
+            correct: 1
+        },
+        {
+            text: "What does GUI stand for?",
+            answers: [
+                { id: 1, text: "Graphical User Interface" },
+                { id: 2, text: "General User Interface" },
+                { id: 3, text: "Graphic Universal Interface" },
+                { id: 4, text: "Generalized User Interaction" }
+            ],
+            correct: 1
+        },
+        {
+            text: "What is the purpose of device drivers?",
+            answers: [
+                { id: 1, text: "Manage hardware resources" },
+                { id: 2, text: "Control software applications" },
+                { id: 3, text: "Connect to the internet" },
+                { id: 4, text: "Enhance system security" }
+            ],
+            correct: 1
+        }
+    ];
+
+    // Populate the quiz questions dynamically
+    const questionsList = document.getElementById('questions-list');
+    questions.forEach((question, index) => {
+        const listItem = document.createElement('li');
+        listItem.innerHTML = `<p>${question.text}</p>`;
+        question.answers.forEach(answer => {
+            listItem.innerHTML += `
+                <label>
+                    <input type="radio" name="question_${index}" value="${answer.id}">
+                    ${answer.text}
+                </label>
+            `;
+        });
+        questionsList.appendChild(listItem);
+    });
+
+    // Timer functionality
+    let timeLeft = 60;
+    let timerInterval = setInterval(() => {
+        document.getElementById('time').innerText = timeLeft;
+        timeLeft--;
+
+        // If time runs out, auto-submit the form
+        if (timeLeft < 0) {
+            clearInterval(timerInterval);
+            document.getElementById('quiz-form').submit();
+        }
+    }, 1000);
+
+    // Form submission handling
+    document.getElementById('quiz-form').onsubmit = function(event) {
+        event.preventDefault(); // Prevent default form submission
+        clearInterval(timerInterval); // Stop the timer
+
+        // Calculate score
+        let score = 0;
+        const total = questions.length;
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.innerHTML = '';
+
+        questions.forEach((question, index) => {
+            const selectedAnswer = document.querySelector(`input[name="question_${index}"]:checked`);
+            if (selectedAnswer && parseInt(selectedAnswer.value) === question.correct) {
+                score++;
+                resultsDiv.innerHTML += `<p>${question.text}: <span class="correct">Correct</span></p>`;
+            } else {
+                resultsDiv.innerHTML += `<p>${question.text}: <span class="incorrect">Incorrect</span></p>`;
+            }
+        });
+
+        resultsDiv.innerHTML += `<p>You scored ${score} out of ${total}</p>`;
+    };
+</script>
+
+</body>
+</html>

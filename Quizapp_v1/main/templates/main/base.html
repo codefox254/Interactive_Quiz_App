@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Quiz Hub - Categories{% endblock %}</title>
+    {% load static %} <!-- Load the static template tag -->
+    
+    <style>
+        /* General body styling */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #13e8e4;
+            overflow-x: hidden;
+        }
+
+        /* Hero section styling */
+        .hero {
+            background-image: url("{% static 'main/images/quiz_background.jpg' %}");
+            background-size: cover;
+            background-position: center;
+            color: rgb(18, 217, 239);
+            height: 60vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            font-weight: 300;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn-start {
+            padding: 12px 30px;
+            font-size: 1.2rem;
+            border: none;
+            background-color: #ff6b6b;
+            color: white;
+            cursor: pointer;
+            border-radius: 25px;
+            transition: 0.3s ease;
+        }
+
+        .btn-start:hover {
+            background-color: #ee5253;
+            transform: scale(1.05);
+        }
+
+        /* Progress bar styling */
+        .progress-bar {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 25px;
+            margin: 20px auto;
+            height: 25px;
+            max-width: 600px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .progress-bar-inner {
+            height: 100%;
+            width: 0%; /* Placeholder for dynamic progress percentage */
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            border-radius: 25px;
+            transition: width 0.3s ease;
+        }
+
+        /* Quiz container styling */
+        .quiz-container {
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 30px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease-out;
+        }
+
+        .quiz-container h1 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .category-list {
+            list-style: none;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        .category-item {
+            margin: 15px;
+        }
+
+        .category-item a {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(45deg, #ff6b6b, #feca57);
+            color: white;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 50px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s, transform 0.3s;
+        }
+
+        .category-item a:hover {
+            transform: translateY(-5px);
+            background: linear-gradient(45deg, #ff9f43, #ff6b6b);
+        }
+
+        /* Animation for quiz container on load */
+        body.loaded .quiz-container {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Media query for responsiveness */
+        @media (max-width: 768px) {
+            .category-item a {
+                padding: 10px 20px;
+                font-size: 1rem;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Hero Section -->
+    <div class="hero">
+        <h1>Welcome to the Quiz Hub!</h1>
+        <p>Test your knowledge in various categories</p>
+        <button class="btn-start" onclick="scrollToCategories()">Get Started</button>
+    </div>
+
+    <!-- Progress Section -->
+    <div class="progress-bar">
+        <div class="progress-bar-inner"></div>
+    </div>
+
+    <!-- Quiz Categories Section -->
+    <div class="quiz-container">
+        <h1>Select a Quiz Category</h1>
+        <ul class="category-list">
+            <li class="category-item"><a href="{% url 'networking_quiz' %}">Networking</a></li>
+            <li class="category-item"><a href="{% url 'databases_quiz' %}">Databases</a></li>
+            <li class="category-item"><a href="{% url 'security_quiz' %}">Computer Security</a></li>
+            <li class="category-item"><a href="{% url 'programming_quiz' %}">Programming</a></li>
+            <li class="category-item"><a href="{% url 'systems_quiz' %}">Computer Systems</a></li>
+        </ul>
+    </div>
+
+    <!-- JavaScript for smooth scrolling and loading animations -->
+    <script>
+        // Function to scroll to quiz categories
+        function scrollToCategories() {
+            document.querySelector('.quiz-container').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Add 'loaded' class after page load to trigger quiz container animation
+        window.addEventListener('load', () => {
+            document.body.classList.add('loaded');
+            
+            // Fetch progress value from the Django backend (replace '0' with actual value)
+            const progressPercentage = {{ progress_value|default:0 }};  // Ensure it's passed as a number
+            document.querySelector('.progress-bar-inner').style.width = progressPercentage + '%';
+        });
+    </script>
+</body>
+</html>

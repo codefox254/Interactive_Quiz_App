@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Programming Quiz</title>
+    <style>
+        /* Basic styles */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        header, footer {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        main {
+            padding: 20px;
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #4CAF50;
+        }
+
+        ol {
+            list-style-type: decimal;
+        }
+
+        li {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin: 5px 0;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        .timer {
+            font-size: 24px;
+            color: red;
+            font-weight: bold;
+            text-align: right;
+        }
+
+        .results {
+            margin-top: 20px;
+            font-size: 18px;
+        }
+
+        .correct {
+            color: green;
+        }
+
+        .incorrect {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    Programming Quiz
+</header>
+
+<main>
+    <div class="timer">Time left: <span id="time">60</span> seconds</div>
+    
+    <h1>Programming Quiz</h1>
+
+    <form id="quiz-form" method="post">
+        {% csrf_token %}
+        <ol id="questions-list"></ol>
+        <button type="submit">Submit Answers</button>
+    </form>
+
+    <div class="results" id="results"></div>
+</main>
+
+<footer>
+    © 2024 Quiz App
+</footer>
+
+<script>
+    // Static questions for the Programming Quiz
+    const questions = [
+        {
+            text: "What is the main purpose of a variable in programming?",
+            answers: [
+                { id: 1, text: "To store data" },
+                { id: 2, text: "To perform calculations" },
+                { id: 3, text: "To create loops" },
+                { id: 4, text: "To define functions" }
+            ],
+            correct: 1 // Correct answer id
+        },
+        {
+            text: "Which of the following is a valid way to declare a variable in JavaScript?",
+            answers: [
+                { id: 1, text: "var myVariable" },
+                { id: 2, text: "variable myVariable" },
+                { id: 3, text: "myVariable: var" },
+                { id: 4, text: "let: myVariable" }
+            ],
+            correct: 1
+        },
+        {
+            text: "What is the output of 2 + '2' in JavaScript?",
+            answers: [
+                { id: 1, text: "4" },
+                { id: 2, text: "22" },
+                { id: 3, text: "NaN" },
+                { id: 4, text: "undefined" }
+            ],
+            correct: 2
+        },
+        {
+            text: "Which of the following is a Python data structure?",
+            answers: [
+                { id: 1, text: "List" },
+                { id: 2, text: "Set" },
+                { id: 3, text: "Dictionary" },
+                { id: 4, text: "All of the above" }
+            ],
+            correct: 4
+        },
+        {
+            text: "Which operator is used for comparison in programming?",
+            answers: [
+                { id: 1, text: "=" },
+                { id: 2, text: "==" },
+                { id: 3, text: "===" },
+                { id: 4, text: "All of the above" }
+            ],
+            correct: 4
+        },
+        {
+            text: "What does API stand for?",
+            answers: [
+                { id: 1, text: "Application Programming Interface" },
+                { id: 2, text: "Application Program Interface" },
+                { id: 3, text: "Application Protocol Interface" },
+                { id: 4, text: "None of the above" }
+            ],
+            correct: 1
+        },
+        {
+            text: "In HTML, which tag is used to define an unordered list?",
+            answers: [
+                { id: 1, text: "<ol>" },
+                { id: 2, text: "<ul>" },
+                { id: 3, text: "<li>" },
+                { id: 4, text: "<list>" }
+            ],
+            correct: 2
+        },
+        {
+            text: "Which of the following is a common way to loop through an array in JavaScript?",
+            answers: [
+                { id: 1, text: "forEach()" },
+                { id: 2, text: "loop()" },
+                { id: 3, text: "each()" },
+                { id: 4, text: "iterate()" }
+            ],
+            correct: 1
+        },
+        {
+            text: "Which HTML tag is used to create a hyperlink?",
+            answers: [
+                { id: 1, text: "<link>" },
+                { id: 2, text: "<a>" },
+                { id: 3, text: "<href>" },
+                { id: 4, text: "<url>" }
+            ],
+            correct: 2
+        }
+    ];
+
+    // Populate the quiz questions dynamically
+    const questionsList = document.getElementById('questions-list');
+    questions.forEach((question, index) => {
+        const listItem = document.createElement('li');
+        listItem.innerHTML = `<p>${question.text}</p>`;
+        question.answers.forEach(answer => {
+            listItem.innerHTML += `
+                <label>
+                    <input type="radio" name="question_${index}" value="${answer.id}">
+                    ${answer.text}
+                </label>
+            `;
+        });
+        questionsList.appendChild(listItem);
+    });
+
+    // Timer functionality
+    let timeLeft = 60;
+    let timerInterval = setInterval(() => {
+        document.getElementById('time').innerText = timeLeft;
+        timeLeft--;
+
+        // If time runs out, auto-submit the form
+        if (timeLeft < 0) {
+            clearInterval(timerInterval);
+            document.getElementById('quiz-form').submit();
+        }
+    }, 1000);
+
+    // Form submission handling
+    document.getElementById('quiz-form').onsubmit = function(event) {
+        event.preventDefault(); // Prevent default form submission
+        clearInterval(timerInterval); // Stop the timer
+
+        // Calculate score
+        let score = 0;
+        const total = questions.length;
+        const resultsDiv = document.getElementById('results');
+        resultsDiv.innerHTML = '';
+
+        questions.forEach((question, index) => {
+            const selectedAnswer = document.querySelector(`input[name="question_${index}"]:checked`);
+            if (selectedAnswer && parseInt(selectedAnswer.value) === question.correct) {
+                score++;
+                resultsDiv.innerHTML += `<p>${question.text}: <span class="correct">Correct</span></p>`;
+            } else {
+                resultsDiv.innerHTML += `<p>${question.text}: <span class="incorrect">Incorrect</span></p>`;
+            }
+        });
+
+        resultsDiv.innerHTML += `<p>You scored ${score} out of ${total}</p>`;
+        
+        // Add Retry and Back buttons
+        resultsDiv.innerHTML += `
+            <button onclick="retryQuiz()">Retry</button>
+            <button onclick="goBack()">Back</button>
+        `;
+    };
+
+    // Functions for Retry and Back
+    function retryQuiz() {
+        location.reload(); // Reloads the page to start over
+    }
+
+    function goBack() {
+        window.history.back(); // Goes back to the previous page
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Welcome to Your Quiz App{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'main/styles/styles.css' %}">
+    <style>
+        /* Additional styles specific to the home page */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4; /* Light background for the body */
+        }
+        header {
+            background-color: rgba(0, 123, 255, 0.9); /* Header background */
+            color: white; /* Header text color */
+            text-align: center;
+            padding: 10px 0;
+        }
+        footer {
+            background-color: rgba(0, 123, 255, 0.9); /* Footer background */
+            color: white; /* Footer text color */
+            text-align: center;
+            padding: 10px 0;
+            position: relative;
+            bottom: 0;
+            width: 100%;
+        }
+        #hero {
+            position: relative;
+            height: 100vh;
+            background: none; /* Remove background color */
+        }
+        #hero::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("{% static 'main/images/back1.jpg' %}") center/cover no-repeat;
+            animation: fadeBackground 35s infinite;
+        }
+        @keyframes fadeBackground {
+            0%, 14.3% { background-image: url("{% static 'main/images/back1.jpg' %}"); }
+            16.6%, 29.9% { background-image: url("{% static 'main/images/back2.jpg' %}"); }
+            33.2%, 49.9% { background-image: url("{% static 'main/images/back3.jpg' %}"); }
+            50.1%, 64.9% { background-image: url("{% static 'main/images/back4.jpg' %}"); }
+            66.6%, 79.9% { background-image: url("{% static 'main/images/back5.jpg' %}"); }
+            83.2%, 99.9% { background-image: url("{% static 'main/images/back6.jpg' %}"); }
+        }
+
+        /* Styles for content */
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 50px;
+            color: #915a07;
+        }
+
+        .hero-content h2 {
+            font-size: 3rem;
+        }
+
+        .hero-content p {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .hero-content .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #fff;
+            color: #333;
+            text-decoration: none;
+            font-size: 1.2rem;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Welcome to Your Quiz App</h1>
+        <nav>
+            <ul>
+                <li><a href="{% url 'home' %}" style="color: white; text-decoration: none;">Home</a></li>
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'quizzes' %}" style="color: white; text-decoration: none;">Quizzes</a></li>
+                <li><a href="{% url 'logout' %}" style="color: white; text-decoration: none;">Logout</a></li>
+                {% else %}
+                <li><a href="{% url 'login' %}" style="color: white; text-decoration: none;">Login</a></li>
+                <li><a href="{% url 'signup' %}" style="color: white; text-decoration: none;">Sign Up</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section id="hero">
+            <div class="hero-content">
+                <h2>Welcome to Your Quiz App</h2>
+                <p>Your ultimate platform for engaging quizzes!</p>
+                <p>Join us to test your knowledge and learn new things in an exciting way. Our Quiz App offers a wide range of quizzes across various subjects, making learning fun and interactive. With an easy-to-use interface and real-time feedback, you can track your progress and challenge yourself or your friends. Get ready to embark on a fun learning journey!</p>
+                {% if not user.is_authenticated %}
+                <p><a href="{% url 'signup' %}" class="btn">Get Started</a></p>
+                {% endif %}
+            </div>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2024 Your Quiz App. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript for background image rotation -->
+    <script>
+        // JavaScript for fading background images
+        setInterval(() => {
+            document.getElementById('hero').classList.toggle('fade');
+        }, 5000); // Change background every 5 seconds
+    </script>
+</body>
+</html>
