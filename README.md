@@ -1,7 +1,7 @@
 Interactive Quiz App
 Welcome to the Interactive Quiz App, a dynamic and engaging platform designed to test and enhance your knowledge across various topics. This application combines clean, intuitive design with robust backend functionality, built using cutting-edge web technologies.
 
-Visit the Live Demo
+Visit the Live Demo (https://codefox254.pythonanywhere.com/)
 
 Table of Contents
 Features
@@ -81,7 +81,7 @@ Submitting a pull request for review
 For major changes, please open an issue first to discuss what you would like to improve or add. Any feature suggestions are highly appreciated!
 
 Author
-Francis Odero - LinkedIn Profile
+Francis Odero - LinkedIn Profile (https://www.linkedin.com/in/francis-odero-722090117/)
 
 Francis Odero is a seasoned Software Engineer (Backend) with a passion for building efficient, scalable, and reliable web applications. Holding the PMP certification from PMI and PSM I certification, he brings a blend of technical prowess and project management expertise to his work. Francis is an enthusiastic advocate for new technologies and always excited about solving real-world problems through code.
 
