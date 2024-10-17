@@ -3,30 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Welcome to Your Quiz App{% endblock %}</title>
+    <title>{% block title %}Welcome to Quiz App{% endblock %}</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'main/styles/styles.css' %}">
     <style>
-        /* Additional styles specific to the home page */
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4; /* Light background for the body */
+            background-color: #f0f8ff; /* Soft background color */
+            color: #333; /* Default text color */
+            overflow-x: hidden; /* Hide horizontal overflow */
         }
         header {
             background-color: rgba(0, 123, 255, 0.9); /* Header background */
             color: white; /* Header text color */
             text-align: center;
-            padding: 10px 0;
-        }
-        footer {
-            background-color: rgba(0, 123, 255, 0.9); /* Footer background */
-            color: white; /* Footer text color */
-            text-align: center;
-            padding: 10px 0;
-            position: relative;
-            bottom: 0;
+            padding: 15px 0;
+            position: fixed;
             width: 100%;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        nav ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        nav ul li {
+            display: inline;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 1.1rem;
+            transition: background-color 0.3s ease;
+        }
+        nav ul li a:hover {
+            background-color: #007bff; /* Lighter hover effect */
+        }
+        main {
+            padding-top: 100px; /* Adjust padding for fixed header */
         }
         #hero {
             position: relative;
@@ -51,48 +73,63 @@
             66.6%, 79.9% { background-image: url("{% static 'main/images/back5.jpg' %}"); }
             83.2%, 99.9% { background-image: url("{% static 'main/images/back6.jpg' %}"); }
         }
-
-        /* Styles for content */
         .hero-content {
             position: relative;
             z-index: 1;
             text-align: center;
-            padding: 50px;
-            color: #915a07;
+            padding: 100px 50px;
+            color: white;
+            animation: fadeIn 1.5s ease-in-out;
         }
-
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
         .hero-content h2 {
-            font-size: 3rem;
-        }
-
-        .hero-content p {
-            font-size: 1.5rem;
+            font-size: 4rem;
             margin-bottom: 20px;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.3);
         }
-
+        .hero-content p {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+        }
         .hero-content .btn {
             display: inline-block;
-            padding: 10px 20px;
-            background-color: #fff;
+            padding: 12px 25px;
+            background-color: #ffcc00;
             color: #333;
             text-decoration: none;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
             border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+        .hero-content .btn:hover {
+            background-color: #ff9900;
+            transform: translateY(-3px);
+        }
+        footer {
+            background-color: rgba(0, 123, 255, 0.9); /* Footer background */
+            color: white; /* Footer text color */
+            text-align: center;
+            padding: 15px 0;
+            position: relative;
+            bottom: 0;
+            width: 100%;
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Welcome to Your Quiz App</h1>
         <nav>
             <ul>
-                <li><a href="{% url 'home' %}" style="color: white; text-decoration: none;">Home</a></li>
+                <li><a href="{% url 'home' %}">Home</a></li>
                 {% if user.is_authenticated %}
-                <li><a href="{% url 'quizzes' %}" style="color: white; text-decoration: none;">Quizzes</a></li>
-                <li><a href="{% url 'logout' %}" style="color: white; text-decoration: none;">Logout</a></li>
+                <li><a href="{% url 'quizzes' %}">Quizzes</a></li>
+                <li><a href="{% url 'logout' %}">Logout</a></li>
                 {% else %}
-                <li><a href="{% url 'login' %}" style="color: white; text-decoration: none;">Login</a></li>
-                <li><a href="{% url 'signup' %}" style="color: white; text-decoration: none;">Sign Up</a></li>
+                <li><a href="{% url 'login' %}">Login</a></li>
+                <li><a href="{% url 'signup' %}">Sign Up</a></li>
                 {% endif %}
             </ul>
         </nav>
@@ -100,9 +137,9 @@
     <main>
         <section id="hero">
             <div class="hero-content">
-                <h2>Welcome to Your Quiz App</h2>
+                <h2>Welcome to Quiz App</h2>
                 <p>Your ultimate platform for engaging quizzes!</p>
-                <p>Join us to test your knowledge and learn new things in an exciting way. Our Quiz App offers a wide range of quizzes across various subjects, making learning fun and interactive. With an easy-to-use interface and real-time feedback, you can track your progress and challenge yourself or your friends. Get ready to embark on a fun learning journey!</p>
+                <p>Join us to test your knowledge and learn new things in an exciting way. Our Quiz App offers a wide range of quizzes across various subjects, making learning fun and interactive.</p>
                 {% if not user.is_authenticated %}
                 <p><a href="{% url 'signup' %}" class="btn">Get Started</a></p>
                 {% endif %}

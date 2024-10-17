@@ -199,8 +199,8 @@
         }
     ];
 
-    // Populate the quiz questions dynamically
-    const questionsList = document.getElementById('questions-list');
+  // Populate the quiz questions dynamically
+  const questionsList = document.getElementById('questions-list');
     questions.forEach((question, index) => {
         const listItem = document.createElement('li');
         listItem.innerHTML = `<p>${question.text}</p>`;
@@ -253,20 +253,19 @@
         
         // Add Retry and Back buttons
         resultsDiv.innerHTML += `
-            <button id="retry-btn">Retry</button>
-            <button id="back-btn">Back</button>
+            <button onclick="retryQuiz()">Retry</button>
+            <button onclick="goBack()">Back</button>
         `;
-
-        // Retry button functionality
-        document.getElementById('retry-btn').onclick = function() {
-            location.reload(); // Reload the page to retry the quiz
-        };
-
-        // Back button functionality
-        document.getElementById('back-btn').onclick = function() {
-            window.history.back(); // Go back to the previous page
-        };
     };
+
+    // Functions for Retry and Back
+    function retryQuiz() {
+        location.reload(); // Reloads the page to start over
+    }
+
+    function goBack() {
+        window.history.back(); // Goes back to the previous page
+    }
 </script>
 
 </body>

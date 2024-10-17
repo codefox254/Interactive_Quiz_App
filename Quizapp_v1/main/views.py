@@ -47,7 +47,7 @@ def logout_view(request):
 # Quizzes Home View
 @login_required
 def quizzes_view(request):
-    categories = ['Networking', 'Databases', 'Computer Security', 'Programming', 'Computer Systems']
+    categories = ['Networking', 'Databases', 'security', 'Programming', 'systems']
     return render(request, 'main/quizzes.html', {'categories': categories})
 
 # Quiz Category View - Filter quizzes based on category

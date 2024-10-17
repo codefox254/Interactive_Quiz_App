@@ -198,8 +198,8 @@
         }
     ];
 
-    // Populate the quiz questions dynamically
-    const questionsList = document.getElementById('questions-list');
+// Populate the quiz questions dynamically
+const questionsList = document.getElementById('questions-list');
     questions.forEach((question, index) => {
         const listItem = document.createElement('li');
         listItem.innerHTML = `<p>${question.text}</p>`;
@@ -249,7 +249,22 @@
         });
 
         resultsDiv.innerHTML += `<p>You scored ${score} out of ${total}</p>`;
+        
+        // Add Retry and Back buttons
+        resultsDiv.innerHTML += `
+            <button onclick="retryQuiz()">Retry</button>
+            <button onclick="goBack()">Back</button>
+        `;
     };
+
+    // Functions for Retry and Back
+    function retryQuiz() {
+        location.reload(); // Reloads the page to start over
+    }
+
+    function goBack() {
+        window.history.back(); // Goes back to the previous page
+    }
 </script>
 
 </body>

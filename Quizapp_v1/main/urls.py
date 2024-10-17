@@ -17,9 +17,9 @@ urlpatterns = [
     # URLs for specific quiz categories
     path('quizzes/networking/', views.quiz_category_view, {'category': 'Networking'}, name='networking_quiz'),
     path('quizzes/databases/', views.quiz_category_view, {'category': 'Databases'}, name='databases_quiz'),
-    path('quizzes/security/', views.quiz_category_view, {'category': 'Computer Security'}, name='security_quiz'),
+    path('quizzes/security/', views.quiz_category_view, {'category': 'security'}, name='security_quiz'),
     path('quizzes/programming/', views.quiz_category_view, {'category': 'Programming'}, name='programming_quiz'),
-    path('quizzes/systems/', views.quiz_category_view, {'category': 'Computer Systems'}, name='systems_quiz'),
+    path('quizzes/systems/', views.quiz_category_view, {'category': 'systems'}, name='systems_quiz'),
 
     # Quiz URLs
     path('quizzes/', views.quizzes_view, name='quizzes'),

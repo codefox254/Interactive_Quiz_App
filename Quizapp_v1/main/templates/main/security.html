@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Networking Quiz</title>
+    <title>Computer Security Quiz</title>
     <style>
         /* Basic styles */
         body {
@@ -87,13 +87,13 @@
 <body>
 
 <header>
-    Networking Quiz
+    Computer Security Quiz
 </header>
 
 <main>
     <div class="timer">Time left: <span id="time">60</span> seconds</div>
     
-    <h1>Networking Quiz</h1>
+    <h1>Computer Security Quiz</h1>
 
     <form id="quiz-form" method="post">
         {% csrf_token %}
@@ -114,7 +114,7 @@
 </footer>
 
 <script>
-    // Static questions for the Networking Quiz
+    // Static questions for the Computer Security Quiz
     const questions = [
         {
             text: "What does LAN stand for?",
@@ -208,8 +208,8 @@
         }
     ];
 
-    // Populate the quiz questions dynamically
-    const questionsList = document.getElementById('questions-list');
+// Populate the quiz questions dynamically
+const questionsList = document.getElementById('questions-list');
     questions.forEach((question, index) => {
         const listItem = document.createElement('li');
         listItem.innerHTML = `<p>${question.text}</p>`;
@@ -260,19 +260,21 @@
 
         resultsDiv.innerHTML += `<p>You scored ${score} out of ${total}</p>`;
         
-        // Show retry and back buttons
-        document.getElementById('button-container').style.display = 'block';
+        // Add Retry and Back buttons
+        resultsDiv.innerHTML += `
+            <button onclick="retryQuiz()">Retry</button>
+            <button onclick="goBack()">Back</button>
+        `;
     };
 
-    // Retry button functionality
-    document.getElementById('retry-button').onclick = function() {
-        location.reload(); // Reload the page to restart the quiz
-    };
+    // Functions for Retry and Back
+    function retryQuiz() {
+        location.reload(); // Reloads the page to start over
+    }
 
-    // Back button functionality
-    document.getElementById('back-button').onclick = function() {
-        window.location.href = 'quizzes.html'; // Replace with your actual quizzes page URL
-    };
+    function goBack() {
+        window.history.back(); // Goes back to the previous page
+    }
 </script>
 
 </body>
